@@ -1,7 +1,5 @@
-#calculate the percentile-ranking of new products for both old and new users.
 
 import numpy as np
-#import pandas as pd
 import h5py
 from scipy import stats
 import auto_fun as auto
@@ -33,7 +31,7 @@ def protect_lncrnadiseas(lncdis_tr,lncdis_val,i):
             u_lncrna = hf['u'][:]
             ccc=u_lncrna.shape[0]
             ddd=u_lncrna.shape[1]
-     """   #只用自编码器训练lncrna的情况
+     """   
      with h5py.File('v_40_lncdis_40+100_auto.h5', 'r') as hf:
 
            v = hf['v'][:]
@@ -41,7 +39,6 @@ def protect_lncrnadiseas(lncdis_tr,lncdis_val,i):
      with h5py.File('v_40_lncdis_40+100_auto.h5', 'r') as hf:
 
             v_lncrna = hf['v'][:]
-     #用自编码器训练lncrna、disease的情况
      with h5py.File('u_40_disease_40+100_auto.h5', 'r') as hf:
 
            u_disease = hf['u'][:]
@@ -64,13 +61,11 @@ def protect_lncrnadiseas(lncdis_tr,lncdis_val,i):
      #only retain the new choices
      rating_val[rating_tr>0]=0
 
-     r_pred_lncrna=np.dot(u_lncrna,v_lncrna.T)  #矩阵相乘
-     r_pred_disease=np.dot(u_disease,v_disease.T)  #矩阵相乘
+     r_pred_lncrna=np.dot(u_lncrna,v_lncrna.T)
+     r_pred_disease=np.dot(u_disease,v_disease.T)
 
      #set mask
      m=(p>0)
-     #score_lncrna=predicte(r_pred_lncrna,rating_val,m)
-     #score_disease=predicte(r_pred_disease,rating_val,m)
      score_lncrna=r_pred_lncrna
      score_disease=r_pred_disease
      print(score_lncrna.shape)
@@ -93,7 +88,6 @@ def protect_lncrnadiseas(lncdis_tr,lncdis_val,i):
      print(score_finall.shape)
      return score_finall
 
-#没有用到
 def predicte(r_pred,rating_val,m):
      rank=0
      total=0
@@ -129,8 +123,6 @@ def predicte(r_pred,rating_val,m):
      print(len(content_list))
      print(len(content_list[0]))
      file=open('prediction_result_lncrnadisease.txt','w')
-     #if u'' in content_list:
-     #     print("nonnn")
 
      for i in content_list2:
           k='\t'.join([str(j) for j in i])
@@ -143,22 +135,8 @@ def predicte(r_pred,rating_val,m):
      zzz=score_matrix.shape[1]
      return score_matrix
 
-#求均值
 def add(a, b):
      c = [[(a[i][j]+b[i][j])/2 for j in range(len(a[i]))] for i in range(len(a))]
-     """
-     n = a.shape[0]
-     m = a.shape[1]
-     c = [None]*n
-     for i in range(len(c)):
-            c[i] = [0]*m
-     # 迭代输出行
-     for i in range(len(a)):
-   # 迭代输出列
-           for j in range(len(a[0])):
-                 c[i][j] = (a[i][j] + b[i][j])/2
-     """
      score_c=np.array(c)
-
 
      return score_c

@@ -3,10 +3,6 @@
 import h5py
 import numpy as np
 import random
-#import matplotlib.pyplot as plt
-#import matplotlib
-#matplotlib.style.use('ggplot')
-#import pandas as pd
 import auto_fun as auto
 import testing_lncrnadisease as testing
 
@@ -46,10 +42,8 @@ def main(denoise = True):
             accList.append(lenList[i])
         else:
             accList.append(accList[i-1]+lenList[i])
-    #read user infor
     with h5py.File('need_lncran_gene_micrna_go.h5', 'r') as hf:
         xtrain = hf['infor'][:]
-    #read rating matrix
     with h5py.File('need_lncran_disease_tr.h5', 'r') as hf:
         rating_mat = hf['rating'][:]
     W1,W2,b1,b2,c1,c2 = auto.initialization(INPUT_LAYER,HIDDEN_UNIT1,HIDDEN_UNIT2,mu,sigma)
@@ -84,7 +78,6 @@ def main(denoise = True):
 
     print('start')
     for iterate in range(iteration):
-        #update u 为了加快梯度下降
 
         for i in range(rating_mat.shape[0]):
             c_diag=np.diag(c[i,:])

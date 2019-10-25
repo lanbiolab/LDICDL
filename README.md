@@ -25,7 +25,7 @@ The implementation of “LDICDL: LncRNA-disease interaction identification based
 ### The diseases features: need_disease_micrna_gene.h5
 ### The lncRNAs features: need_lncrna_gene_micrna_go.h5
 
-## Run:
+## Run
 ### The 10-fold program entry: row_roc.py
 ### The denovo program entry: col_denovo_diseaserelated.py
 

@@ -20,7 +20,7 @@ def deeplearing_start(lncdis_tr,lncdis_val,i):
     print(timecounts[0])
     return score_matrix
 def main1(denoise = True):
-    INPUT_LAYER = 6066 #lncran特征维度
+    INPUT_LAYER = 6066 #lncrna feature sizes
     HIDDEN_UNIT1 = 130
     HIDDEN_UNIT2 = 100
     LEARNING_RATE = 0.001/100
@@ -50,7 +50,7 @@ def main1(denoise = True):
             accList.append(lenList[i])
         else:
             accList.append(accList[i-1]+lenList[i])
-    #read user infor
+    #read lncrna infor
     with h5py.File('need_lncrna_gene_micrna_go.h5', 'r') as hf:
         xtrain = hf['infor'][:]
     #read rating matrix
@@ -58,11 +58,11 @@ def main1(denoise = True):
         rating_mat = hf['rating'][:]
 
     W1,W2,b1,b2,c1,c2 = auto.initialization(INPUT_LAYER,HIDDEN_UNIT1,HIDDEN_UNIT2,mu,sigma)
-    #define user and item matrices
+    #define lncrna and disease matrices
     u=np.random.rand(rating_mat.shape[0],l)
     v=np.random.rand(rating_mat.shape[1],l)
 
-    #define preference and confidence matrices  preference 0-1关系矩阵
+    #define preference and confidence matrices
     p=np.zeros(rating_mat.shape)
     p[rating_mat>0]=1
     c=np.zeros(rating_mat.shape)
@@ -72,14 +72,14 @@ def main1(denoise = True):
 
     print('start')
     for iterate in range(iteration):
-        #update u
+        #update lncrna
         for i in range(rating_mat.shape[0]):
             c_diag=np.diag(c[i,:])
             temp_u=np.dot(np.dot(p[i,:],c_diag),v)
             u[i,:]=np.dot(temp_u,np.linalg.pinv(l2_u*np.identity(l)+np.dot(np.dot(v.T,c_diag),v)))
         print('u complete')
 
-        #update v
+        #update disease
         for j in range(rating_mat.shape[1]):
             #print(j)
             c_diag=np.diag(c[:,j])
@@ -109,24 +109,16 @@ def main1(denoise = True):
         hf.create_dataset("b1",  data=b1)
     with h5py.File('c1_40_lncdis_40+100.h5', 'w') as hf:
         hf.create_dataset("c1",  data=c1)
-    #多隐层要记录权值及偏置
     if hiddenlayer3:
         with h5py.File('W2_40_disease_40+100.h5', 'w') as hf:
             hf.create_dataset("W2", data=W2)
         with h5py.File('b2_40_disease_40+100.h5', 'w') as hf:
             hf.create_dataset("b2", data=b2)
-    #making_graph(trainLoss, valiLoss, testLoss)
-
-    #
-    # hidden = pd.DataFrame(hidden.T)
-    # prediction = pd.DataFrame(prediction.T)
-    # hidden.to_csv('hidden.csv')
-    # prediction.to_csv('prediction.csv')
 
     return hidden
 
 def main2(denoise = True):
-    INPUT_LAYER = 10621 #lncran特征维度
+    INPUT_LAYER = 10621 # disease feature sizes
     HIDDEN_UNIT1 = 130
     HIDDEN_UNIT2 = 100
     LEARNING_RATE = 0.001/100
@@ -153,32 +145,19 @@ def main2(denoise = True):
             accList.append(lenList[i])
         else:
             accList.append(accList[i-1]+lenList[i])
-    #read user infor
     with h5py.File('need_disease_micrna_gene.h5', 'r') as hf:
         xtrain = hf['infor'][:]
-        xtrain = xtrain #方便前面的代码重用
+        xtrain = xtrain
     #read rating matrix
     with h5py.File('need_lncrna_disease_tr.h5', 'r') as hf:
         rating_mat = hf['rating'][:]
         rating_mat =  rating_mat.transpose()
 
     W1,W2,b1,b2,c1,c2 = auto.initialization(INPUT_LAYER,HIDDEN_UNIT1,HIDDEN_UNIT2,mu,sigma)
-    #define user and item matrices
     u=np.random.rand(rating_mat.shape[0],l)
     v=np.random.rand(rating_mat.shape[1],l)
 
-    #with h5py.File('u_40_mono_40+100_auto.h5', 'r') as hf:
-    #    u = hf['u'][:]
-    #with h5py.File('v_40_mono_40+100_auto.h5', 'r') as hf:
-    #    v = hf['v'][:]
-    #with h5py.File('W1_40_mono_40+100.h5', 'r') as hf:
-    #    W1 = hf['W1'][:]
-    #with h5py.File('b1_40_mono_40+100.h5', 'r') as hf:
-    #    b1 = hf['b1'][:]
-    #with h5py.File('c1_40_mono_40+100.h5', 'r') as hf:
-    #    c1 = hf['c1'][:]
-
-    #define preference and confidence matrices  preference 0-1关系矩阵
+    #define preference and confidence matrices
     p=np.zeros(rating_mat.shape)
     p[rating_mat>0]=1
     c=np.zeros(rating_mat.shape)
@@ -188,15 +167,14 @@ def main2(denoise = True):
 
     print('start')
     for iterate in range(iteration):
-        #update u
-
+        #update
         for i in range(rating_mat.shape[0]):
             c_diag=np.diag(c[i,:])
             temp_u=np.dot(np.dot(p[i,:],c_diag),v)
             u[i,:]=np.dot(temp_u,np.linalg.pinv(l2_u*np.identity(l)+np.dot(np.dot(v.T,c_diag),v)))
         print('u complete')
 
-        #update v
+        #update
         for j in range(rating_mat.shape[1]):
             #print(j)
             c_diag=np.diag(c[:,j])
@@ -211,11 +189,11 @@ def main2(denoise = True):
                                       LEARNING_RATE, denoise=True)
         #getoutPut(W1,W2,b1,b2,x,accList):
         hidden = auto.getoutPut(W1, W2, b1, b2, xtrain, accList)
-        u=hidden#转置回lncrna-disease
+        u=hidden
         print(np.linalg.norm(p-np.dot(u,v.T)))
 
     with h5py.File('v_40_disease_40+100_auto.h5', 'w') as hf:
-        hf.create_dataset("v",  data=u) #以转换
+        hf.create_dataset("v",  data=u)
     with h5py.File('u_40_disease_40+100_auto.h5', 'w') as hf:
         hf.create_dataset("u",  data=v)
     with h5py.File('W1_40_disease_40+100.h5', 'w') as hf:
@@ -230,14 +208,6 @@ def main2(denoise = True):
             hf.create_dataset("W2", data=W2)
         with h5py.File('b2_40_disease_40+100.h5', 'w') as hf:
             hf.create_dataset("b2", data=b2)
-
-    #making_graph(trainLoss, valiLoss, testLoss)
-
-    #
-    # hidden = pd.DataFrame(hidden.T)
-    # prediction = pd.DataFrame(prediction.T)
-    # hidden.to_csv('hidden.csv')
-    # prediction.to_csv('prediction.csv')
 
     return hidden
 

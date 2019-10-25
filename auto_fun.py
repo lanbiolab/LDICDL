@@ -92,9 +92,6 @@ def getLoss(W1,W2,xtrain,u,b1,b2,c1,c2,accList):
     return meanLoss,loss_enc
 
 def autoEncoder(ratio_l,ratio_u,batch,W1,W2,xtrain,u,b1,b2,c1,c2,accList,EPOCH_NUM,LEARNING_RATE,denoise = True):
-    ## forward Propogation
-    # var0, var1, var2, var3, var4, var5, var6, var7, var8, var9, \
-    # var10, var11, var12, var13, var14, var15, var16, var17 = getIndVar(xtrain, lenList)
     beta=0.9
     dW10=np.zeros(W1.shape)
     dW20=np.zeros(W2.shape)

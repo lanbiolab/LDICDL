@@ -37,7 +37,6 @@ def main(denoise = True):
             accList.append(lenList[i])
         else:
             accList.append(accList[i-1]+lenList[i])
-    #read user infor
     with h5py.File('user_infor.h5', 'r') as hf:
         xtrain = hf['infor'][:]
     #read rating matrix
@@ -45,22 +44,8 @@ def main(denoise = True):
         rating_mat = hf['rating'][:]
     
     W1,W2,b1,b2,c1,c2 = auto.initialization(INPUT_LAYER,HIDDEN_UNIT1,HIDDEN_UNIT2,mu,sigma)
-    #define user and item matrices
-    u=np.random.rand(rating_mat.shape[0],l)  #随机定义40维
+    u=np.random.rand(rating_mat.shape[0],l)
     v=np.random.rand(rating_mat.shape[1],l)
-
-    #with h5py.File('u_40_mono_40+100_auto.h5', 'r') as hf:
-    #    u = hf['u'][:]
-    #with h5py.File('v_40_mono_40+100_auto.h5', 'r') as hf:
-    #    v = hf['v'][:]
-    #with h5py.File('W1_40_mono_40+100.h5', 'r') as hf:
-    #    W1 = hf['W1'][:]
-    #with h5py.File('b1_40_mono_40+100.h5', 'r') as hf:
-    #    b1 = hf['b1'][:]
-    #with h5py.File('c1_40_mono_40+100.h5', 'r') as hf:
-    #    c1 = hf['c1'][:]
-
-    #define preference and confidence matrices  preference 0-1关系矩阵
     p=np.zeros(rating_mat.shape)
     p[rating_mat>0]=1
     c=np.zeros(rating_mat.shape)
@@ -70,15 +55,12 @@ def main(denoise = True):
 
     print('start')
     for iterate in range(iteration):
-        #update u
-        
         for i in range(rating_mat.shape[0]):
             c_diag=np.diag(c[i,:])
             temp_u=np.dot(np.dot(p[i,:],c_diag),v)
             u[i,:]=np.dot(temp_u,np.linalg.pinv(l2_u*np.identity(l)+np.dot(np.dot(v.T,c_diag),v)))
         print('u complete')
         
-        #update v
         for j in range(rating_mat.shape[1]):
             #print(j)
             c_diag=np.diag(c[:,j])
@@ -102,15 +84,6 @@ def main(denoise = True):
         hf.create_dataset("b1",  data=b1)
     with h5py.File('c1_40_mono_40+100.h5', 'w') as hf:
         hf.create_dataset("c1",  data=c1)
-    
-    #making_graph(trainLoss, valiLoss, testLoss)
-    
-    #
-    # hidden = pd.DataFrame(hidden.T)
-    # prediction = pd.DataFrame(prediction.T)
-    # hidden.to_csv('hidden.csv')
-    # prediction.to_csv('prediction.csv')
-    
     return hidden
 
 main(denoise = True)

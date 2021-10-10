@@ -1,5 +1,5 @@
 # LDICDL
-The implementation of “LDICDL: LncRNA-disease interaction identification based on Collaborative Deep Learning”, Wei Lan, Dehuang Lai, Qingfeng Chen, Ximin Wu, Baoshan Chen, Jianxin Wang, and Yi-Ping Phoebe Chen
+The implementation of “LDICDL: LncRNA-disease interaction identification based on Collaborative Deep Learning”, Wei Lan, Dehuang Lai, Qingfeng Chen, Ximin Wu, Baoshan Chen, Jianxin Wang, and Yi-Ping Phoebe Chen. IEEE/ACM Transactions on Computational Biology and Bioinformatics, 2020, DOI: 10.1109/TCBB.2020.3034910.
 
 ## Requirement
 
